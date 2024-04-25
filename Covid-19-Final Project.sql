@@ -37,7 +37,7 @@ where iso_code not like '%OWID%';
 
 -- Find top 10 highest rate of death vs case rates by country (Query used for Tableau Dashboard)--
 select
-	Continent,
+    Continent,
     Location,
     sum(new_deaths) as Total_Deaths,
     sum(new_cases) as Total_Cases,
@@ -51,7 +51,7 @@ limit 10;
 
 -- Find top 10 highest rate of covid death rates relative to the population (Query used for Tableau Dashboard)--
 select
-	continent,
+    continent,
     location,
     max(population) as Population,
     sum(new_deaths) as Total_Deaths,
@@ -67,10 +67,10 @@ from
 select
 	Continent,
 	Location,
-    concat(LPAD(month(date), 2,'0'), '-', year(date)) as Month_Year,
-    YEAR(date) as Year,
-    sum(new_deaths) as Death_Count,
-    sum(new_cases) as Total_Cases
+    	concat(LPAD(month(date), 2,'0'), '-', year(date)) as Month_Year,
+    	YEAR(date) as Year,
+   	sum(new_deaths) as Death_Count,
+    	sum(new_cases) as Total_Cases
 from
 	coviddeaths
 where iso_code not like '%OWID%'
