@@ -30,7 +30,7 @@ having dup > 1;
 select
 	sum(new_deaths) as Total_Deaths,
 	sum(new_cases) as Total_Cases,
-    (sum(new_deaths) / sum(new_cases)) * 100 as Cases_To_Death_Ratio
+    	(sum(new_deaths) / sum(new_cases)) * 100 as Cases_To_Death_Ratio
 from
 	coviddeaths
 where iso_code not like '%OWID%';
@@ -41,7 +41,7 @@ select
     Location,
     sum(new_deaths) as Total_Deaths,
     sum(new_cases) as Total_Cases,
-	(sum(new_deaths) / sum(new_cases)) * 100 AS Death_Percent
+    (sum(new_deaths) / sum(new_cases)) * 100 AS Death_Percent
 FROM
 	coviddeaths
 where iso_code not like '%owid%'
@@ -72,17 +72,17 @@ select
    	sum(new_deaths) as Death_Count,
     	sum(new_cases) as Total_Cases
 from
-	coviddeaths
+	  coviddeaths
 where iso_code not like '%OWID%'
 group by continent,location, Month_Year, Year
 order by Year asc;
 
 -- Death Count By Continent (Query used for Tableau Dashboard)--
 select
-	continent,
+    continent,
     sum(new_deaths) as Total_Deaths
 from
-	coviddeaths
+    coviddeaths
 where iso_code not like '%OWID%'
 group by continent
 order by Total_deaths desc;
@@ -92,7 +92,7 @@ order by Total_deaths desc;
 select
 	Continent,
 	Location,
-    sum(new_cases) as Total_Cases
+        sum(new_cases) as Total_Cases
 from 
 	coviddeaths
 where iso_code not like '%OWID%'
@@ -106,24 +106,25 @@ limit 10;
 -- Find the total average amount of cases for all countries--
 WITH cte AS (
   SELECT location, sum(new_cases) AS sum_of_total_cases
-  FROM coviddeaths
+  	FROM coviddeaths
   where iso_code not like '%OWID%'
   group by location
 )
+	
 SELECT round(AVG(sum_of_total_cases),2) AS Avg_Cases
 FROM cte;
 
--- Find the total average amount of cases for all countries and then only display location with cases more than the average-
+-- Find the total average amount of cases for all countries and then only display countries with cases more than the average-
 with cte as (
 	select location, sum(new_cases) as sum_of_total_cases
-    from coviddeaths
-    where iso_code not like '%OWID%'
-    group by location
-    order by sum_of_total_cases asc
+    		from coviddeaths
+    	where iso_code not like '%OWID%'
+    	group by location
+    	order by sum_of_total_cases asc
 )
 
 select location, sum_of_total_cases 
-from cte
+	from cte
 where sum_of_total_cases > (
 select avg(sum_of_total_cases) as avg_of_total_cases
 from cte
@@ -133,7 +134,7 @@ from cte
 select
 	continent,
 	location,
-    sum(new_cases) as total_cases
+        sum(new_cases) as total_cases
 from
 	coviddeaths
 where total_cases <> 0
@@ -142,16 +143,16 @@ order by total_cases asc
 limit 20;
 
 
--- Calculate the running total of new vaccines and vaccine to population ratio --
-with Vac_vs_Pop (continent, location, date, population, new_vaccination, Running_Total_Vaccines)
+-- Calculate the running total of new vaccines and calculate vaccine to population ratio --
+with Vac_vs_Pop 
 as
-(select
-	cd.continent,
-    cd.location,
-    cd.date,
-    cd.population,
-    cv.new_vaccinations,
-    sum(cv.new_vaccinations) over (partition by cd.location order by cd.location, cd.date) as Running_Total_Vaccines
+	(select
+    		cd.continent,
+    		cd.location,
+    		cd.date,
+    		cd.population,
+    		cv.new_vaccinations,
+    		sum(cv.new_vaccinations) over (partition by cd.location order by cd.location, cd.date) as Running_Total_Vaccines
 from
 	coviddeaths cd
 		join
@@ -165,7 +166,7 @@ from Vac_vs_Pop;
 
 -- Find top 10 lowest rate of vaccinated countries relative to population--
 select
-	cv.continent,
+    cv.continent,
     cv.location,
     max(cv.people_fully_vaccinated) as Vaccinated,
     cd.population,
@@ -183,22 +184,22 @@ limit 10;
 
 select
 	Continent,
-    Location,
-    max(people_fully_vaccinated) as Fully_Vaccinated
+    	Location,
+    	max(people_fully_vaccinated) as Fully_Vaccinated
 from
 	covid_vac
 where iso_code not like '%owid%'
 group by iso_code, continent, location
-order by max(people_fully_vaccinated) desc;
+order by Fully_Vaccinated desc;
 
 
 -- Find top 10 highest(Exclude over 100%) rate of vaccinatinated countries relative to population--
 select
 	cv.continent,
-    cv.location,
-    max(cv.people_fully_vaccinated) as Vaccinated,
-    max(cd.population) as population,
-    (MAX(cv.people_fully_vaccinated) / MAX(cd.population)) * 100 AS Vaccinated_Population_Percent
+    	cv.location,
+    	max(cv.people_fully_vaccinated) as Vaccinated,
+    	max(cd.population) as population,
+    	(MAX(cv.people_fully_vaccinated) / MAX(cd.population)) * 100 AS Vaccinated_Population_Percent
 from
 	covid_vac cv
 		join
