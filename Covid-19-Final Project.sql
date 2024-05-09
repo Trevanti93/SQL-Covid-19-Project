@@ -131,7 +131,7 @@ select avg(sum_of_total_cases) as avg_of_total_cases
 from cte
 );
 
--- List out top 20 countries with lowest number of cases--
+-- Top 20 countries with lowest number of cases--
 select
 	continent,
 	location,
@@ -143,6 +143,20 @@ group by continent, location
 order by total_cases asc
 limit 20;
 
+-- Top 10 countries with highest rate of covid deaths relative to the population--
+select
+	continent,
+    location,
+    max(population) as Population,
+    sum(new_deaths) as Total_Deaths,
+    sum(new_cases) as Total_Cases,
+    (sum(new_deaths)/max(population)) * 100 as Pop_Death_Perecentage
+from
+	coviddeaths
+    where iso_code not like '%OWID%'
+    group by continent, location
+    order by Pop_Death_Perecentage desc
+    limit 10;
 
 -- Calculate the running total of new vaccines and calculate vaccine to population ratio --
 with Vac_vs_Pop 
@@ -165,23 +179,40 @@ select *, (Running_Total_Vaccines/Population) * 100 as Vaccine_to_Pop_Ratio
 from Vac_vs_Pop;
 
 
--- Find top 10 lowest rate of vaccinated countries relative to population--
+-- Top 10 lowest rate of vaccinated countries relative to population--
 select
-    cv.continent,
-    cv.location,
-    max(cv.people_fully_vaccinated) as Vaccinated,
-    cd.population,
-    (MAX(cv.people_fully_vaccinated) / MAX(cd.population)) * 100 AS Vaccinated_Population
+	cv.Continent,
+    cv.Location,
+    max(cv.people_fully_vaccinated) as People_Vaccinated,
+    cd.Population,
+    (MAX(cv.people_fully_vaccinated) / MAX(cd.population)) * 100 AS Vaccinated_Population_Perc
 from
 	covid_vac cv
 		join
 	coviddeaths cd on cv.location = cd.location and cv.date = cd.date
 where cv.people_fully_vaccinated <> 0
 group by continent, location, population
-order by Vaccinated_Population asc
+order by Vaccinated_Population_Perc asc
 limit 10;
 
--- List out top 10 countries with highest number of fully vaccinated individuals--
+-- Top 10 lowest rate of vaccinated countries relative to number of COVID cases--
+select
+	cv.Continent,
+    	cv.Location,
+	sum(cd.new_cases) as Total_Cases,
+    	max(cv.people_fully_vaccinated) as People_Vaccinated,
+    	(sum(cd.new_cases) / max(cv.people_fully_vaccinated)) * 100 AS Case_Vaccination_Rate
+from
+	covid_vac cv
+		join
+	coviddeaths cd on cv.location = cd.location and cv.date = cd.date
+where cv.people_fully_vaccinated <> 0
+group by continent, location
+having sum(cd.new_cases) <> 0
+order by Case_Vaccination_Rate asc
+limit 10;
+
+-- Top 10 countries with highest number of fully vaccinated individuals--
 
 select
 	Continent,
@@ -194,12 +225,12 @@ group by iso_code, continent, location
 order by Fully_Vaccinated desc;
 
 
--- Find top 10 highest(Exclude over 100%) rate of vaccinatinated countries relative to population--
+-- Top 10 highest(Exclude over 100%) rate of vaccinatinated countries relative to population--
 select
-	cv.continent,
-    	cv.location,
+	cv.Continent,
+    	cv.Location,
     	max(cv.people_fully_vaccinated) as Vaccinated,
-    	max(cd.population) as population,
+    	max(cd.population) as Population,
     	(MAX(cv.people_fully_vaccinated) / MAX(cd.population)) * 100 AS Vaccinated_Population_Percent
 from
 	covid_vac cv
