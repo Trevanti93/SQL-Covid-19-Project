@@ -181,7 +181,7 @@ from Vac_vs_Pop;
 
 -- Top 10 lowest rate of vaccinated countries relative to population--
 select
-	cv.Continent,
+    cv.Continent,
     cv.Location,
     max(cv.people_fully_vaccinated) as People_Vaccinated,
     cd.Population,
