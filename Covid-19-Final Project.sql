@@ -3,6 +3,7 @@
 -- Please note data with ISO Code OWID is not linked to a country. Furthermore, this data will be excluded from this project--
 
 -- Data Cleansing + Quality Checks--
+
 -- Format dates in Covid Deaths Table--
 UPDATE coviddeaths
 SET date = STR_TO_DATE(date, '%d-%m-%Y');
@@ -35,7 +36,7 @@ from
 	coviddeaths
 where iso_code not like '%OWID%';
 
--- Find top 10 highest rate of death vs case rates by country (Query used for Tableau Dashboard)--
+-- Top 10 highest rate of death vs case rates by country (Query used for Tableau Dashboard)--
 select
     Continent,
     Location,
@@ -49,20 +50,7 @@ group by continent,location
 order by Death_Percent desc
 limit 10;
 
--- Find top 10 highest rate of covid death rates relative to the population (Query used for Tableau Dashboard)--
-select
-    continent,
-    location,
-    max(population) as Population,
-    sum(new_deaths) as Total_Deaths,
-    sum(new_cases) as Total_Cases,
-    (sum(new_deaths)/max(population)) * 100 as Pop_Death_Perecentage
-from
-	coviddeaths
-    where iso_code not like '%OWID%'
-    group by continent, location
-    order by Pop_Death_Perecentage desc;
-    
+
 -- Compare the Death to Case Ratio Month Over Month (Query used for Tableau Dashboard) --
 select
 	Continent,
@@ -87,7 +75,7 @@ where iso_code not like '%OWID%'
 group by continent
 order by Total_deaths desc;
 
--- List out top 10 countries with highest number of infections (Query used for Tableau Dashboard)--
+-- Top 10 countries with highest number of infections (Query used for Tableau Dashboard)--
 
 select
 	Continent,
@@ -99,6 +87,19 @@ where iso_code not like '%OWID%'
 group by continent, location
 order by Total_Cases desc
 limit 10;
+
+-- Infection Rate Relative to population (Query used for Tableau Dashboard)--
+select
+    Continent,
+    Location,
+    Population,
+    sum(new_cases) as Total_Cases,
+    sum((new_cases)/population * 100) as Percentage_Pop_Infected
+from
+	coviddeaths
+where iso_code not like '%OWID%'
+group by continent, location, population
+order by Percentage_Pop_Infected desc;
 
 
 -- Additional Queries For Analysis--
