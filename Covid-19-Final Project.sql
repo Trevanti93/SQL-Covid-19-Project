@@ -217,12 +217,13 @@ limit 10;
 select
 	Continent,
     	Location,
-    	max(people_fully_vaccinated) as Fully_Vaccinated
+    	max(people_fully_vaccinated) as People_Fully_Vaccinated
 from
 	covid_vac
 where iso_code not like '%owid%'
 group by iso_code, continent, location
-order by Fully_Vaccinated desc;
+order by People_Fully_Vaccinated desc
+limit 10;
 
 
 -- Top 10 highest(Exclude over 100%) rate of vaccinated countries relative to population--
