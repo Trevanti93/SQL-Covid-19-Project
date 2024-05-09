@@ -10,7 +10,7 @@
 COVID-19 Dataset [DOWNLOAD HERE](https://ourworldindata.org/covid-deaths)
 
 ### Tools
-- MySQL -Data Analysis/Exploration
+- MySQL -Data Analysis/Exploration [ACCESS MySQL QUERIES HERE](https://github.com/Trevanti93/SQL-Covid-19-Project/blob/main/Covid-19-Final%20Project.sql)
 - Tableau -Creating Visualizations/Dashboard [ACCESS DASHBOARD HERE](https://public.tableau.com/app/profile/trevanti.whtifield/viz/Covid-19Dashboard_17151999577630/CovidDashboard1)
 
 
