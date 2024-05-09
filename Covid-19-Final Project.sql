@@ -225,7 +225,7 @@ group by iso_code, continent, location
 order by Fully_Vaccinated desc;
 
 
--- Top 10 highest(Exclude over 100%) rate of vaccinatinated countries relative to population--
+-- Top 10 highest(Exclude over 100%) rate of vaccinated countries relative to population--
 select
 	cv.Continent,
     	cv.Location,
